@@ -4,14 +4,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
+    public Image life1;
+    public Image life2;
+    public Image life3;
+
+    public TextMeshProUGUI Score;
+    public TextMeshProUGUI HighScore;
 
     public bool isGameover = false;
-    private int score = 0;
-    private int life = 3;
+    public int score = 0;
+    private int highScore = 0;
+    public int life = 3;
     // Start is called before the first frame update
 
     private void Awake()
@@ -37,6 +45,23 @@ public class GameManager : MonoBehaviour
         if(isGameover && Input.GetMouseButtonDown(0))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
+        Score.text = "1P-" + score;
+        if(highScore<score)
+        {
+            highScore = score;
+            PlayerPrefs.SetFloat("HighScore", highScore);
+        }
+
+        if(life == 2) {
+            life3.enabled = false;
+        }
+        if(life == 1) {
+            life2.enabled = false;
+        }
+        if(life == 0) {
+            life1.enabled = false;
         }
     }
 

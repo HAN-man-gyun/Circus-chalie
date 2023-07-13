@@ -4,13 +4,13 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Obstacle
   - Dead
+  - Coin
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Coin
   - Water
   - UI
   - 
@@ -51,6 +51,9 @@ TagManager:
     locked: 0
   - name: Obstacle2
     uniqueID: 4176343663
+    locked: 0
+  - name: Coin
+    uniqueID: 2717777071
     locked: 0
   - name: Default
     uniqueID: 0

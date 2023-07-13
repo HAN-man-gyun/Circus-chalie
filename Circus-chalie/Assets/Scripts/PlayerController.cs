@@ -34,10 +34,7 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
-         
-        
-        
-        
+
         if (Input.GetButtonDown("Jump")&& jumpCount<1)
         {
             //점프횟수증가
@@ -70,7 +67,13 @@ public class PlayerController : MonoBehaviour
     {
         if(collision.tag == "Dead" && isDead ==false)
         {
-            Die();
+            Debug.Log("피가 깎였잖아");
+            GameManager.instance.life -= 1;
+            Debug.LogFormat("현재라이프{0}", GameManager.instance.life);
+            if (GameManager.instance.life == 0)
+            {
+                Die();
+            }
         }
     }
 
