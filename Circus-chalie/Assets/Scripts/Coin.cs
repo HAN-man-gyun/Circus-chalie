@@ -19,7 +19,11 @@ public class Coin : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(transform.position.x >22)
+        {
+            coinRenderer.enabled = true;
+
+        }
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {

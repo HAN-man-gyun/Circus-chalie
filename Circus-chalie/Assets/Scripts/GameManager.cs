@@ -8,18 +8,24 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
+    
     public static GameManager instance;
+    public GameObject End;
+    public GameObject End2;
+    public int meter = 10;
     public Image life1;
     public Image life2;
     public Image life3;
 
-    public TextMeshProUGUI Score;
-    public TextMeshProUGUI HighScore;
+    public TMP_Text Score;
+    public TMP_Text HighScore;
+    //public TextMeshProUGUI GameOver;
+    public GameObject GameOver;
+    public GameObject GameClear;
 
     public bool isGameover = false;
     public int score = 0;
     private int highScore = 0;
-    public int life = 3;
     // Start is called before the first frame update
 
     private void Awake()
@@ -36,15 +42,17 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
-        
+        isGameover = false;
+        HighScore.text = "HI-" + (PlayerPrefs.GetFloat("HighScore"));
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(isGameover && Input.GetMouseButtonDown(0))
+        if(meter==90)
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            End.SetActive(false);
+            End2.SetActive(true);
         }
 
         Score.text = "1P-" + score;
@@ -54,27 +62,45 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.SetFloat("HighScore", highScore);
         }
 
-        if(life == 2) {
+        if(Static.life == 2) {
             life3.enabled = false;
         }
-        if(life == 1) {
+        if(Static.life == 1) {
+            life3.enabled = false;
             life2.enabled = false;
         }
-        if(life == 0) {
+        if(Static.life == 0) {
+            life3.enabled = false;
+            life2.enabled = false;
             life1.enabled = false;
         }
     }
 
-    public void AddScore(int newScore)
-    {
-        if(!isGameover )
-        {
-            score += newScore;
-        }
-    }
 
     public void OnPlayerDead()
     {
         isGameover = true;
+        Debug.Log("플레이어데드");
+        GameOver.SetActive(true);
+        
+    }
+
+    public void OnClearGame()
+    {
+        GameClear.SetActive(true);
+    }
+
+    public void Restart()
+    {
+        
+
+        if(Static.life ==0)
+        {
+            SceneManager.LoadScene("TitleScene");
+        }
+        else
+        {
+            SceneManager.LoadScene("SampleScene");
+        }
     }
 }

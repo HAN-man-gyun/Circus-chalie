@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
 {
     public AudioClip JumpClip;
     public AudioClip DeathClip;
+    public AudioClip ClearClip;
     private int jumpCount =0;
     private float jumpForce = 500f;
 
@@ -63,22 +64,38 @@ public class PlayerController : MonoBehaviour
         GameManager.instance.OnPlayerDead();
     }
 
+    public void Clear()
+    {
+        Debug.Log("여기서 승리표시가될것이다.");
+        animator.SetTrigger("Die");
+        playerAudio.clip = ClearClip;
+        playerAudio.Play();
+        playerRigidbody.velocity = Vector2.zero;
+
+        isDead = true;
+
+        GameManager.instance.OnClearGame();
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.tag == "Dead" && isDead ==false)
+       
+        if (collision.tag == "Dead" && isDead ==false)
         {
-            Debug.Log("피가 깎였잖아");
-            GameManager.instance.life -= 1;
-            Debug.LogFormat("현재라이프{0}", GameManager.instance.life);
-            if (GameManager.instance.life == 0)
-            {
-                Die();
-            }
+
+            Debug.LogFormat("현재라이프{0}", Static.life);
+
+            Die();
+            Static.life -= 1;
         }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (collision.collider.tag == "End" && isDead == false)
+        {
+            Clear();
+        }
         if (collision.contacts[0].normal.y >0.7f)
         {
             isGrounded = true;

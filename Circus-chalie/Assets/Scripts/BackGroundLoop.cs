@@ -23,10 +23,21 @@ public class BackGroundLoop : MonoBehaviour
         {
             Reposition();
         }
+        else if(transform.position.x >=width)
+        {
+            BackPosition();
+        }
     }
     private void Reposition()
     {
         Vector2 offset = new Vector2(width* 2f, 0);
         transform.position = (Vector2)transform.position + offset;
+        GameManager.instance.meter += 10;
+    }
+    private void BackPosition()
+    {
+        Vector2 offset = new Vector2(width * 2f, 0);
+        transform.position = (Vector2)transform.position - offset;
+        GameManager.instance.meter -= 10;
     }
 }

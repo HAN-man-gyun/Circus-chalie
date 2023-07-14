@@ -6,7 +6,7 @@ using UnityEngine;
 public class ObstaclesSpawner : MonoBehaviour
 {
     public GameObject obstaclePrefab;
-    private int count = 99;
+    private int count = 10;
     // Start is called before the first frame update
 
     public float timeBetSpawnMin = 3.25f;
@@ -29,8 +29,8 @@ public class ObstaclesSpawner : MonoBehaviour
         for(int i = 0; i < count; i++)
         {
             obstacles[i] = Instantiate(obstaclePrefab, poolPosition, Quaternion.identity);
+            obstacles[i].transform.SetParent(transform);
         }
-
         lastSpawnTime = 0f;
         timeBetSpawn = 0f;
     }
@@ -54,10 +54,10 @@ public class ObstaclesSpawner : MonoBehaviour
             Debug.LogFormat("{0}ÀÌ´Ù.", currentIndex);
             
             
-            /*if(currentIndex >= count)
+            if(currentIndex >= count)
             {
                 currentIndex = 0;
-            }*/
+            }
         }
     }
 }
