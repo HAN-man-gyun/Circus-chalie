@@ -12,6 +12,9 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     public GameObject End;
     public GameObject End2;
+    public GameObject End3;
+
+
     public int meter = 10;
     public Image life1;
     public Image life2;
@@ -53,7 +56,10 @@ public class GameManager : MonoBehaviour
         {
             End.SetActive(false);
             End2.SetActive(true);
+            End3.SetActive(true);
         }
+ 
+           
 
         Score.text = "1P-" + score;
         if(highScore<score)
@@ -87,6 +93,7 @@ public class GameManager : MonoBehaviour
 
     public void OnClearGame()
     {
+        isGameover = true;
         GameClear.SetActive(true);
     }
 

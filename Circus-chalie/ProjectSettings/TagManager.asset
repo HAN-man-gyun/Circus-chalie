@@ -7,6 +7,7 @@ TagManager:
   - Dead
   - Coin
   - End
+  - Boss
   layers:
   - Default
   - TransparentFX
@@ -15,7 +16,7 @@ TagManager:
   - Water
   - UI
   - BackGround
-  - 
+  - Platform
   - 
   - 
   - 
@@ -59,6 +60,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Ui
+  - name: UI
     uniqueID: 193215573
     locked: 0

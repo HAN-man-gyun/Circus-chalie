@@ -9,59 +9,90 @@ public class PlayerController2 : MonoBehaviour
     public AudioClip DeathClip;
     public AudioClip ClearClip;
     private float speed = 5f;
-    private int jumpCount = 2;
-    private float jumpForce = 500f;
+    private int jumpCount = 0;
+    private float jumpForce = 10f;
+    private float maxSpeed = 5f;
     // Start is called before the first frame update
 
-    private bool isGrounded = false;
+    private bool isMoving = false;
     private bool isDead = false;
 
-    private SpriteRenderer renderer;
-    private Rigidbody2D rigidbody;
+    private SpriteRenderer playerRenderer;
+    private Rigidbody2D playerRigidbody;
     private Animator animator;
-    private AudioSource audio;
+    private AudioSource playerAudio;
 
     void Start()
     {
-        rigidbody = GetComponent<Rigidbody2D>();
+        playerRigidbody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        audio = GetComponent<AudioSource>();
-        renderer = GetComponent<SpriteRenderer>();
+        playerAudio = GetComponent<AudioSource>();
+        playerRenderer = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(isDead)
+        if (isDead)
         {
             return;
         }
-       
-        if (Input.GetButtonDown("Jump") && jumpCount < 1)
+        if (Input.GetButtonDown("Jump")&&(animator.GetBool("isJumping")==false))
         {
-            //점프횟수증가
-            jumpCount++;
-            //AddForce로 점프하기
-            rigidbody.AddForce(new Vector2(0, jumpForce));
+            playerRigidbody.AddForce(Vector2.up* jumpForce, ForceMode2D.Impulse);
+            animator.SetBool("isJumping", true);
+        }
+        if (Input.GetButtonUp("Horizontal"))
+        {
+            playerRigidbody.velocity = new Vector2(playerRigidbody.velocity.normalized.x * 0.5f, playerRigidbody.velocity.y);
+        }
 
-            //오디오소스재생
-            audio.Play();
-            //
-            Debug.LogFormat("점프카운터는{0}다.", jumpCount);
-        }
-        if (isGrounded == true)
+        if (Input.GetButtonDown("Horizontal"))
         {
-            rigidbody.velocity = new Vector2(Input.GetAxisRaw("Horizontal") * speed, 0);
+            playerRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
         }
-        animator.SetBool("Grounded", isGrounded);
+        if(Mathf.Abs(playerRigidbody.velocity.normalized.x) <0.3f)
+        {
+            animator.SetBool("isMoving", false);
+        }
+        else
+        {
+            animator.SetBool("isMoving", true);
+        }
+    }
+    private void FixedUpdate()
+    {
+        float xSpeed = Input.GetAxisRaw("Horizontal");
+        playerRigidbody.AddForce(xSpeed * Vector2.right, ForceMode2D.Impulse);
+        if (playerRigidbody.velocity.x > maxSpeed)
+        {
+            playerRigidbody.velocity = new Vector2(maxSpeed, playerRigidbody.velocity.y);
+        }
+        else if (playerRigidbody.velocity.x < maxSpeed * -1)
+        {
+            playerRigidbody.velocity = new Vector2(maxSpeed * -1, playerRigidbody.velocity.y);
+        }
+
+        if (playerRigidbody.velocity.y < 0)
+        {
+            Debug.DrawRay(playerRigidbody.position, Vector2.down, Color.black);
+            RaycastHit2D rayHit = Physics2D.Raycast(playerRigidbody.position, Vector2.down, 1, LayerMask.GetMask("Platform"));
+            if (rayHit.collider != null)
+            {
+                if (rayHit.distance < 1.5f)
+                {
+                    animator.SetBool("isJumping", false);
+                }
+            }
+        }
     }
     public void Die()
     {
         Debug.Log("여기서 죽음표시가될것이다.");
         animator.SetTrigger("Die");
-        audio.clip = DeathClip;
-        audio.Play();
-        rigidbody.velocity = Vector2.zero;
+        playerAudio.clip = DeathClip;
+        playerAudio.Play();
+        playerRigidbody.velocity = Vector2.zero;
 
         isDead = true;
 
@@ -72,42 +103,26 @@ public class PlayerController2 : MonoBehaviour
     {
         Debug.Log("여기서 승리표시가될것이다.");
         animator.SetTrigger("Die");
-        audio.clip = ClearClip;
-        audio.Play();
-        rigidbody.velocity = Vector2.zero;
+        playerAudio.clip = ClearClip;
+        playerAudio.Play();
+        playerRigidbody.velocity = Vector2.zero;
 
         isDead = true;
 
         GameManager.instance.OnClearGame();
     }
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-
-        if (collision.tag == "Dead" && isDead == false)
-        {
-
-            Debug.LogFormat("현재라이프{0}", Static.life);
-
-            Die();
-            Static.life -= 1;
-        }
-    }
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.collider.tag == "End" && isDead == false)
         {
             Clear();
         }
-        if (collision.contacts[0].normal.y > 0.7f)
+        if (collision.collider.tag == "Boss" && isDead == false)
         {
-            isGrounded = true;
-            jumpCount = 0;
-        }
-    }
 
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        isGrounded = false;
+            Debug.LogFormat("현재라이프{0}", Static.life);
+
+            Static.life -= 1;
+        }
     }
 }
